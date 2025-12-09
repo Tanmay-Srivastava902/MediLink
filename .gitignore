@@ -2,7 +2,8 @@
 MediLink/
 
 # markdown files
-*.md
+mylearning/
+
 # Python cache
 __pycache__/
 *.py[cod]
