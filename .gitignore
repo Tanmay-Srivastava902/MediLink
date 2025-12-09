@@ -1,0 +1,26 @@
+# Virtual Environment
+MediLink/
+
+# markdown files
+*.md
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Backup files
+backup.py
+setup_backup.py
+*.bak
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
