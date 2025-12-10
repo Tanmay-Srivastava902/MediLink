@@ -4,13 +4,7 @@ import utils # utility file
 import subprocess 
 import os
 import time 
-
-# constants 
-SUCCESS = 1 
-FAILED = 0 
-MAX_ATTEMPTS = 3 
-MYSQL_ROOT_ENV  = os.environ.copy()  # copying the environment
-MYSQL_ROOT_ENV['MYSQL_PWD'] = ''  # initializing mysql_pswd variable
+import constants
 
 
 
@@ -41,13 +35,13 @@ def set_mysql_root_pass():
         # authenticating root user 
         is_auth =  auth_user('root') 
         # password is returned :  auth Successful 
-        if is_auth == SUCCESS: 
+        if is_auth == constants.SUCCESS: 
             print('Password Is Saved For Future Mysql Root Operations ..')
-            return  SUCCESS
+            return  constants.SUCCESS
         # Failed msg is returned 
         else : 
             print('Password Set Failed ......  ')
-            return FAILED
+            return constants.FAILED
         
     # Logged In To Root Account Directly 
     elif result.returncode == 0 :
@@ -70,18 +64,18 @@ def set_mysql_root_pass():
 
                 print('Root password is Changed Successfully')
                 # updating the password to environment settings 
-                MYSQL_ROOT_ENV['MYSQL_PWD'] = rootpass
-                return SUCCESS
+                constants.MYSQL_ROOT_ENV['MYSQL_PWD'] = rootpass
+                return constants.SUCCESS
 
             # if query is failed  
             else : 
                 
                 print(f'password Set Failed..  \n {result.stderr} \n Exiting....')
-                return FAILED 
+                return constants.FAILED 
     # Unexpected Error Occured 
     else : 
         print(f'password Set Failed..  \n {result.stderr} \n Exiting....')
-        return FAILED 
+        return constants.FAILED 
 
 
 def mysql_root_operation(query : str):
@@ -102,15 +96,15 @@ def mysql_root_operation(query : str):
     
     '''
     # password set required 
-    if MYSQL_ROOT_ENV['MYSQL_PWD'] == '':
+    if constants.MYSQL_ROOT_ENV['MYSQL_PWD'] == '':
         print("password Is Not set... ") 
 
         is_set = set_mysql_root_pass()
         # password set failed 
-        if is_set == FAILED :  
+        if is_set == constants.FAILED :  
             print("continuation may lead to crashes during root operation")
             if utils.is_continue() :
-                return FAILED # user still want to contiue
+                return constants.FAILED # user still want to contiue
             else : 
                 print('Exitting the program : User Choice ....')
                 time.sleep(1)
@@ -119,7 +113,7 @@ def mysql_root_operation(query : str):
     result = subprocess.run(['mysql' , '-u' , 'root' , '-e' , query ] ,
                             capture_output=True,
                             text=True,
-                            env=MYSQL_ROOT_ENV) # getting password  form MYSQL_ROOT_ENV
+                            env=constants.MYSQL_ROOT_ENV) # getting password  form MYSQL_ROOT_ENV
     return result
     
     
@@ -139,7 +133,7 @@ def auth_user(user : str ) :
     '''
 
     attempt = 0 
-    while attempt < MAX_ATTEMPTS: 
+    while attempt < constants.MAX_ATTEMPTS: 
 
 
         # Getting password 
@@ -149,7 +143,7 @@ def auth_user(user : str ) :
         # failed to get password 
         if secure_pass == 0 : 
              print("Authentication Failed : Failed to get password ")
-             return FAILED 
+             return constants.FAILED 
  
        # creating a temporary environment ( book ) having different page for password we are using a secret book for exchage of passwords between python code and mysql server skipping the terminal 
         TEMP_ENV = os.environ.copy()
@@ -164,8 +158,8 @@ def auth_user(user : str ) :
         if result.returncode == 0 :
             print('Authentication Successful....')
             # Store verified password in global environment
-            MYSQL_ROOT_ENV['MYSQL_PWD'] = secure_pass
-            return SUCCESS  
+            constants.MYSQL_ROOT_ENV['MYSQL_PWD'] = secure_pass
+            return constants.SUCCESS  
         
         else :
             print(f'Authentication Failed : Invalid Credentials \n Retrying......  | Attempt {attempt+1}/3')
@@ -174,7 +168,7 @@ def auth_user(user : str ) :
     # max attempt exceeded 
     else : 
         print(' Authentication Failed : No attempts Left ')
-        return FAILED 
+        return constants.FAILED 
     
 
 def create_user() :
@@ -206,11 +200,11 @@ def create_user() :
 
     if result.returncode == 0 : 
         print('User Successfully created ')
-        return SUCCESS
+        return constants.SUCCESS
     
     else : 
         print(f'User Cannot Be Created  \n {result.stderr}....')
-        return FAILED
+        return constants.FAILED
     
 
 

@@ -3,11 +3,8 @@ import subprocess  # for handling processes
 import getpass # for hiding password in terminal 
 import time # for delay effect
 import utils # for utility functions 
+import constants
 
-# initializing constants for better understanding of flow of control 
-SUCCESS = 1
-FAILED  = 0 
-NEEDS_INSTALL = -1
 rootpass = None   # by default no password is set 
 
 
@@ -36,7 +33,7 @@ def set_sudo_pass():
             # Updating Global Root Password 
             global rootpass
             rootpass = current_pass 
-            return SUCCESS  # success password updated 
+            return constants.SUCCESS  # success password updated 
         # wrong password 
         elif res.returncode == 1 :  
             print(f'Sorry wrong Password please try again attempt left : {3 - (attempt +1)}')
@@ -82,15 +79,15 @@ def service_manager(service :str, operation : str):
         # sending status 
         if status == 0 :   # service is running properly
             print(f'{service} is Running Properly')
-            return SUCCESS  # started 
+            return constants.SUCCESS  # started 
         elif status  == 3 : # service is not running
             print(f'{service} Is Stopped' )
-            return FAILED # FAILED 
+            return constants.FAILED # FAILED 
         # service install required 
         else : 
             # ask user whether to install or quit 
             print(f'{service} Install Required')
-            return NEEDS_INSTALL 
+            return constants.NEEDS_INSTALL 
     
     # if start has requested
     elif operation == 'start' :
@@ -98,10 +95,10 @@ def service_manager(service :str, operation : str):
         time.sleep(0.5)
         if result.returncode  == 0 :
             print(f' {service} has Started')
-            return SUCCESS
+            return constants.SUCCESS
         else : 
             print(f'{service} could not be Started : \n {result.stderr}')
-            return FAILED
+            return constants.FAILED
     
     # if stop has requested
     elif operation == 'stop' :
@@ -109,21 +106,21 @@ def service_manager(service :str, operation : str):
         time.sleep(0.5)
         if result.returncode  == 0 :
             print(f' {service} has Stopped successfully...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print(f'{service} could not be Stopped : \n {result.stderr}')
-            return FAILED # FAILED 
+            return constants.FAILED # FAILED 
     # if restart was requested 
     elif operation == 'restart' :
         if result.returncode == 0 : 
             print(f' {service} has restarted successfully...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         elif result.returncode == 5 : 
             print(f'{service} is not installed ')
-            return NEEDS_INSTALL 
+            return constants.NEEDS_INSTALL 
         else : 
             print(f'Restart FAILED : \n {result.stderr}')
-            return FAILED # FAILED 
+            return constants.FAILED # FAILED 
             
         
     # if don't know what requested
@@ -150,10 +147,10 @@ def package_installer( package_type : str  , package : str) :
         result  = run_as_sudo(['apt' , 'install' , '-y' ,  package])
         if result.returncode == 0 :
             print(f'Installation successful : {package} Installed')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print(f'Package Installation FAILED : \n{result.stderr} \n program may not run as usual if proceeded ...')
-            return FAILED if utils.is_continue() else exit()   # FAILED 
+            return constants.FAILED if utils.is_continue() else exit()   # FAILED 
             # user can continue but without this package or exit here 
 
     # installing python package
@@ -163,10 +160,10 @@ def package_installer( package_type : str  , package : str) :
             # ex - pip install mysql-connector-python
             if result.returncode == 0 :
                 print(f'Installation success : {package} Installed')
-                return SUCCESS # success
+                return constants.SUCCESS # success
             else : 
                 print(f'Package Installation FAILED : \n{result.stderr} \n program may not run as usual if proceeded ...')
-                return FAILED if utils.is_continue() else exit()   # FAILED 
+                return constants.FAILED if utils.is_continue() else exit()   # FAILED 
         
         # pip installation required
         except FileNotFoundError :
@@ -180,22 +177,22 @@ def package_installer( package_type : str  , package : str) :
                 # installed package 
                 if result.returncode == 0 :
                     print(f'Installation successful : {package} Installed')
-                    return SUCCESS # success
+                    return constants.SUCCESS # success
                 # package FAILED to install
                 else : 
                     print(f'Package Installation FAILED : \n{result.stderr} \n program may not run as usual if proceeded ...')
-                    return FAILED if utils.is_continue() else exit()   # FAILED 
+                    return constants.FAILED if utils.is_continue() else exit()   # FAILED 
             # pip FAILED to install
             else :
                 print(f'Package Installation FAILED : \n{result.stderr} \n program may not run as usual if proceeded ...')
                 if utils.is_continue() :
-                    return FAILED # 
+                    return constants.FAILED # 
                 else :
                     exit()
     # Unknown package_type variable 
     else : 
         print('package_type of package is incorrect please select from (system / python)')
-        return FAILED # FAILED  
+        return constants.FAILED # FAILED  
 
    
 # apache server configuration
@@ -204,29 +201,29 @@ def apache_config():
     status  = service_manager('apache2' , 'status')  # getting the result of the command 
 
     # running 
-    if status == SUCCESS  : 
+    if status == constants.SUCCESS  : 
         print('Apache Server Setup successful...')
-        return SUCCESS # setup success
+        return constants.SUCCESS # setup success
     # server is stopped
-    elif status == FAILED :
+    elif status == constants.FAILED :
         # starting 
         started = service_manager('apache2' , 'start')
         if started : 
             print(' Apache Server Setup success...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print('Apache Setup FAILED  : Exiting......')
-            return FAILED if utils.is_continue() else exit() # FAILED 
+            return constants.FAILED if utils.is_continue() else exit() # FAILED 
     # not installed 
-    elif status == NEEDS_INSTALL : 
+    elif status == constants.NEEDS_INSTALL : 
         print('Installing...')
         installed = package_installer('system' , 'apache2')
         if installed  : 
             print('Apache Server Setup success...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print('Apache Setup FAILED  : Exiting......')
-            return FAILED if utils.is_continue() else exit()  # FAILED 
+            return constants.FAILED if utils.is_continue() else exit()  # FAILED 
                 
     else  :   # unknown error Setup FAILED 
         print('Unknown Error occurred \n configuration UnSUCCESSful Exiting.....')
@@ -240,28 +237,28 @@ def mysql_config() :
     status  = service_manager('mysql' , 'status')  # getting the result of the command 
 
     # running 
-    if status == SUCCESS  : 
+    if status == constants.SUCCESS  : 
         print('mysql Server Setup successful...')
-        return SUCCESS # setup success
+        return constants.SUCCESS # setup success
     # server is stopped
-    elif status == FAILED :
+    elif status == constants.FAILED :
         # starting 
         started = service_manager('mysql' , 'start')
         if started : 
             print('Mysql Server Setup successful...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print(f'Mysql Setup FAILED  : Exiting......')
-            return FAILED if utils.is_continue() else exit() # FAILED 
+            return constants.FAILED if utils.is_continue() else exit() # FAILED 
     # not installed 
-    elif status == NEEDS_INSTALL : 
+    elif status == constants.NEEDS_INSTALL : 
         installed = package_installer('system' , 'mysql-server')
         if installed  : 
             print('Mysql Server Setup successful...')
-            return SUCCESS # success
+            return constants.SUCCESS # success
         else : 
             print(f'Mysql Setup FAILED  : Exiting......')
-            return FAILED if utils.is_continue() else exit()  # FAILED 
+            return constants.FAILED if utils.is_continue() else exit()  # FAILED 
     else  :   # unknown error Setup FAILED 
         print('Unknown Error occurred \n configuration unsuccessful Exiting.....')
         exit()
