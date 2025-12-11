@@ -1,24 +1,24 @@
 # imports 
 import getpass 
-import constants 
+import constants as const 
 
 # checking if to continue or not 
 def is_continue():
     attempt = 0
-    while attempt < constants.MAX_ATTEMPTS  : 
+    while attempt < const.MAX_ATTEMPTS  : 
         response = input('Do you want to continue (y/n) : ').strip().lower()
         if response == 'y'   :
             print('proceeding...')
-            return constants.SUCCESS # true 
+            return const.SUCCESS # true 
         elif response == 'n' : 
             print('Permission Denied By User ...')
-            return constants.FAILED # false
+            return const.FAILED # false
         else : 
             print(f'Invalid Response Please Retry \n attempt : {attempt+1} / 3')
             attempt += 1 
     else : 
         print('No attempts Left....')
-        return constants.FAILED # false
+        return const.FAILED # false
 
 
 def escape_mysql_injectables(ipt : str) :
@@ -54,13 +54,13 @@ def gtpass():
         0 : if Failed to match 
     '''
     attempt = 0 
-    while attempt < constants.MAX_ATTEMPTS : 
+    while attempt < const.MAX_ATTEMPTS : 
 
-        # NOTE Passowrd should not be taken directly in terminal (passowrd are visble in process list )
+        # NOTE Password should not be taken directly in terminal (passwords are visible in process list)
         # getting password
         password  = getpass.getpass('Please Enter Password : ')
         confirm_password  = getpass.getpass('Please Confirm Your Password : ')
-        print('Passowrd Captured ')
+        print('Password Captured')
         
         # password confirmed 
         if password == confirm_password :
