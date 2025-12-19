@@ -1,0 +1,18 @@
+{
+    "DEFAULT_CONFIG":{
+
+        "pwd_file_path":"pwd.dat",
+        "session_file_path":"session.dat"
+    },
+    "ROOT_CONFIG":{
+        "host":"localhost",
+        "user":"root",
+        "password":""
+
+    },
+    "DB_CONFIG":{
+        "db":"medilink",
+        "user":"medilink_admin",
+        "pwd":""
+    }
+}

@@ -1,0 +1,1 @@
+* genrate a file having passowrd {'username':'password'}
