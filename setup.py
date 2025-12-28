@@ -302,10 +302,10 @@ def mysql_config() :
    
 # for testing purpose only  
 
-# if __name__ == "__main__" :
+if __name__ == "__main__" :
     # pass
-    # print('Script Testing Started.... ')
-
+    print('Script Testing Started.... ')
+    mysql_config()
     # # NOTE password is required 
     # # no password known needed sudo to set it 
     # set_sudo_pass() # setting password 

@@ -23,10 +23,10 @@ def is_continue() -> bool:
         print(f'Attempt {attempt+1}/{const.MAX_ATTEMPTS} ')
         response = input('Do you want to continue (y/n) : ').strip().lower()
         if response == 'y'   :
-            print('proceeding...')
+            # print('proceeding...')
             return const.SUCCESS  
         elif response == 'n' : 
-            print('Permission Denied By User ...')
+            # print('Permission Denied By User ...')
             return const.FAILED 
         else : 
             print(f'Invalid Response Please Retry....')
