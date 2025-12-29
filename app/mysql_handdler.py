@@ -200,24 +200,24 @@ def update_pwd(user:str,host:str) -> str:
         
 
 
-# main line segment 
-if __name__ == "__main__":
-    try:
-        pwd  = pwd_handdler('load','root')
-        print('Current root password is :' , pwd)
-        conn = create_conn('localhost','root',pwd)
-        res = execute_cmd(conn , 'SELECT user,host from mysql.user ;')
-        print("user table before " , res)
-        user = create_user()
-        print(res)
-        res = execute_cmd(conn , 'SELECT user,host from mysql.user ;')
-        print("user table after user creation " , res)
-        pwd = pwd_handdler('load',user)
-        print(f"password for new_user {user} is : " , pwd)
-        pwd = update_pwd(user,'localhost')
-        print(pwd)
-        pwd = pwd_handdler('load',user)
-        print(f"password for new_user {user} after updation is : " , pwd)
+# # main line segment 
+# if __name__ == "__main__":
+#     try:
+#         pwd  = pwd_handdler('load','root')
+#         print('Current root password is :' , pwd)
+#         conn = create_conn('localhost','root',pwd)
+#         res = execute_cmd(conn , 'SELECT user,host from mysql.user ;')
+#         print("user table before " , res)
+#         user = create_user()
+#         print(res)
+#         res = execute_cmd(conn , 'SELECT user,host from mysql.user ;')
+#         print("user table after user creation " , res)
+#         pwd = pwd_handdler('load',user)
+#         print(f"password for new_user {user} is : " , pwd)
+#         pwd = update_pwd(user,'localhost')
+#         print(pwd)
+#         pwd = pwd_handdler('load',user)
+#         print(f"password for new_user {user} after updation is : " , pwd)
 
-    except Exception as e :
-        print("the error is :" , e )
+#     except Exception as e :
+#         print("the error is :" , e )

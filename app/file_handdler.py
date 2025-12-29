@@ -4,23 +4,7 @@ import pickle
 
 # external
 from app_utils import is_continue,gtpass ,MAX_ATTEMPTS
-#  NOTE create file repair function
-# def file_repair(file:str):
-#     '''
-#     Fixes Broken/Missing/Currupted Files 
-#     Args:
-#         File : [pwd/session/json] file to repair
-#     '''
-#     try :
-#         if file == 'pwd':
-#             with open('pwd.dat','w') as f : 
-#                 for attempt in range(MAX_ATTEMPTS):
-#                     print(f'Attempt left : {MAX_ATTEMPTS-attempt}')
-#                     root_pwd = gtpass('root','system')
-                    
-
-    
-
+  
 def json_handdler(mode:str,config_name:str ,config_dict:dict[str,str] = {}):
     '''
         Handdels config.json file creates if not present 
@@ -57,7 +41,7 @@ def json_handdler(mode:str,config_name:str ,config_dict:dict[str,str] = {}):
                 f.truncate()
 
                 # updating configs back to file
-                json.dump(parent_dict,f)
+                json.dump(parent_dict,f,indent=4)
             return config_dict # sending the dict back after updation for consistency
         
         # if wrong mode is requested or no requied param is given 
@@ -74,7 +58,7 @@ def json_handdler(mode:str,config_name:str ,config_dict:dict[str,str] = {}):
             print("Config file is missing, creating it...")
             with open('app_config.json','w') as f:
                 parent_dict = {config_name:config_dict} # creating a json file 
-                json.dump(parent_dict,f)
+                json.dump(parent_dict,f,indent=4)
             return config_dict
 
     except KeyError as e :
@@ -202,17 +186,17 @@ def session_handdler(mode:str,session_dict:dict[str,str] = {}) -> dict[str,str]:
         raise RuntimeError("invalid Configrations requested make sure session_dict is correctly given") 
 
 # if __name__ == "__main__":
-    # try:
-        # pwd testing
-        # pwd = pwd_handdler('load','root')
-        # print(pwd)
-        # print(pwd_handdler('update','testuser','Test.com@user'))
-        # session testing 
-        # print(session_handdler('load'))
-        # print(session_handdler('update',{'host':'localhost','user':'tanmay','pwd':'SecurePass@1201','db':'medilink'}))
-        # json testing 
-        # print(json_handdler('load','APP_CONFIG'))
-        # print(json_handdler('update','APP_CONFIG',{'APP_NAME':'MEDILINK','AUTHOR':'TANMAYSRI'}))
-    # except Exception as e :
-    #     print("error occured :" , e)
+#     try:
+#         # pwd testing
+#         pwd = pwd_handdler('load','root')
+#         print(pwd)
+#         print(pwd_handdler('update','testuser','Test.com@user'))
+#         # session testing 
+#         print(session_handdler('load'))
+#         print(session_handdler('update',{'host':'localhost','user':'tanmay','pwd':'SecurePass@1201','db':'medilink'}))
+#         # json testing 
+#         print(json_handdler('load','APP_CONFIG'))
+#         print(json_handdler('update','APP_CONFIG',{'APP_NAME':'MEDILINK','AUTHOR':'TANMAYSRI'}))
+#     except Exception as e :
+#         print("error occured :" , e)
 

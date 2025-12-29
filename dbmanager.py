@@ -11,7 +11,6 @@ from time import sleep as wait
 
 # assigning values of contents form josn
 
-
 #NOTE * connect_db is done for now there is no need to go beyond this 
 def reconnect(user:str = ''):
     '''

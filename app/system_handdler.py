@@ -245,29 +245,25 @@ def configure_server(server:str) :
         status  = service_manager( server , 'status')  # getting the result of the command
         # status found 
         if status == 1 : 
-            print(f'{server} Server Setup successful...')
             return SUCCESS 
         elif status == 0 :
             # server is stopped 
             service_manager(server,'start')
             # service started 
-            print('Apache Server Setup successful...')
             return SUCCESS 
         else : 
             # needs install 
             print(f'Server  Not Found ! Installing {server} server')
-
             # installing server 
             package_installer('system',server)
             # package installed 
-            print(f'{server} Server Setup successful...')
             return SUCCESS 
         
     except RuntimeError as e :
-        raise RuntimeError(f'{server} server Setup Failed ! {e}')
+        raise RuntimeError(e)
     
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # try :
     #     res = execute_cmd(['systemctl','status','mysql'])
     #     print('return code :',res.returncode,'\noutput is : ' ,res.stdout,'\nerror is :' , res.stderr)
