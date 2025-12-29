@@ -4,12 +4,11 @@
 # importing modules 
 
 # built in modules 
-from mysql.connector import connect , Error 
+from mysql.connector import connect , Error
 from mysql.connector.errors import InterfaceError , ProgrammingError 
-# from typing import 
 # external modules 
-from app_utils import MAX_ATTEMPTS , gtpass , is_continue
-from file_handdler import session_handdler , pwd_handdler , json_handdler
+from utils_handdler import MAX_ATTEMPTS , gtpass , is_continue
+from file_handdler import pwd_handdler 
 
 def create_conn(host:str,user:str,pwd:str,db:str = ''):
     '''
@@ -31,7 +30,7 @@ def create_conn(host:str,user:str,pwd:str,db:str = ''):
         raise RuntimeError("Configs cannot be saved try running app_setup.py ..")
 
 
-def execute_cmd(conn ,query:str,params:tuple = ()) -> list[tuple[str]]:
+def execute_cmd(conn,query:str,params:tuple = ()) -> list[tuple[str]]:
     '''
         Executes a query and returns the all rows fetched or emptly list or error 
         [**kwargs needed only when root_access is set to false**]
