@@ -3,7 +3,7 @@ import json
 import pickle
 
 # external
-from app_utils import is_continue,gtpass ,MAX_ATTEMPTS
+from utils_handdler import is_continue
   
 def json_handdler(mode:str,config_name:str ,config_dict:dict[str,str] = {}):
     '''

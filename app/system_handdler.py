@@ -1,7 +1,7 @@
 ''' This Module Contains the Functions For Setting Up the System For Convinience'''
 # getting modules 
 from file_handdler import pwd_handdler
-from app_utils import gtpass , MAX_ATTEMPTS , NEEDS_INSTALL , SUCCESS , FAILED , is_continue  , SERVICE_TO_PACKAGE
+from utils_handdler import gtpass , MAX_ATTEMPTS , NEEDS_INSTALL , SUCCESS , FAILED , is_continue  , SERVICE_TO_PACKAGE
 from subprocess import run
 # NOTE fix max attempts as soon as posible 
 def update_pwd():
