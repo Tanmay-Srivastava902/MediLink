@@ -1,61 +1,44 @@
 ''' This Module Contains the Functions For Setting Up the System For Convinience'''
 # getting modules 
-from file_handdler import pwd_handdler
-from utils_handdler import gtpass , MAX_ATTEMPTS , NEEDS_INSTALL , SUCCESS , FAILED , is_continue  , SERVICE_TO_PACKAGE
+from handdlers.file_handdler import pwd_handdler
+from handdlers.utils_handdler import gtpass , MAX_ATTEMPTS , NEEDS_INSTALL , SUCCESS , FAILED , is_continue  , SERVICE_TO_PACKAGE
 from subprocess import run
 # NOTE fix max attempts as soon as posible 
-def update_pwd():
-    # getting sudo password 
-        try : 
-            # password found
-            sudo_pwd = pwd_handdler('load','sudo')
-            print(sudo_pwd)
+def save_sudo_pwd() -> bool:
+    '''saves system sudo user pswd as requested Returns True if Saved Else Error'''
+    try : 
+        # system root pwd
+        for attempt in range(MAX_ATTEMPTS):
+            if attempt > 0 :
+                print(f'Attempt Left {MAX_ATTEMPTS-attempt}')
+
+            sudo_pwd = gtpass('sudo','system')
+            # verifying pwd
+            res  = run(
+                        ['sudo' ,'-S','su'],  # adding sudo to the command 
+                        input=sudo_pwd + '\n', # sending password 
+                        capture_output=True,
+                        text=True
+                       )
+            # verified
+            if res.returncode == 0: 
+                # saving sudo password 
+                pwd_handdler('update','sudo',sudo_pwd)
+                print('Saved Sudo Passowrd')
+                return True 
+
+            elif res.returncode == 1: # command failed to execute
+                print(f'Sorry, wrong password. Please try again.')
+                continue
+                # sent to retry
+            else : 
+                raise RuntimeError(f'Unknown Error : {res.stderr}') # getting out 
+        else:
+            raise RuntimeError('Max Attempt Reached')
             
-        # either file is missing/currupted  or password for sudo user is not in file
-        except RuntimeError as e :
-            
-            print(e)
-            
-            print("No password found for sudo user. Password is being updated.")
-
-            # setting sudo password
-            for attempt in range(MAX_ATTEMPTS):
-
-                print(f"Attempts Left {MAX_ATTEMPTS-attempt}")
-                pwd = gtpass('sudo','system',1)
-
-                res = run(
-                            ['sudo' , '-S' , 'su'],  # -s sends one time input  to shell and closes the pipe immediately 
-                            input=pwd + '\n',  # sending input to the terminal 
-                            capture_output=True,   # to avoid terminal interruption
-                            text=True # dechipher the output into stderr and stdout
-                        )
-                
-                # checking for res 
-                if res.returncode == 0 : # cmd success
-
-                    print('Password verified: Saving password for future use')
-                    
-                    try:
-                        # saving sudo pwd
-                        pwd_handdler('update','sudo',pwd=pwd)
-                    except RuntimeError as e : 
-                        print(f"Password could not be saved. You may need to re-enter it when needed: {e}")
-                    finally : 
-                        return pwd  # returning Password 
-                    
-                elif res.returncode == 1  : # auth error 
-                    print("Wrong sudo password entered. Please retry.")
-                    continue # retrying 
-                else : 
-                    raise RuntimeError(f"Sorry Could Not Update Password : {res.stderr}")
-
-                  
-            # attempts exceeded (only reached if loop completes without success)
-            print('Sorry, no attempts left. Exiting...')
-            raise RuntimeError("Sorry No Attempts Left")
+    except RuntimeError as e :
+        raise RuntimeError(f'Cannot Save Password For System \'Sudo\' User !{e}')
         
-
 def execute_cmd(cmd:list[str],sudo_access:bool=False):
     '''
     Executes The Command And Returns 
@@ -264,8 +247,13 @@ def configure_server(server:str) :
     
 
 # if __name__ == "__main__":
-    # try :
-    #     res = execute_cmd(['systemctl','status','mysql'])
-    #     print('return code :',res.returncode,'\noutput is : ' ,res.stdout,'\nerror is :' , res.stderr)
-    # except RuntimeError as e :
-    #     print('exception is e ')
+#     try :
+#         print(pwd_handdler('load','sudo'))
+#         print(save_sudo_pwd())
+#         print(pwd_handdler('load','sudo'))
+
+
+#     #     res = execute_cmd(['systemctl','status','mysql'])
+#     #     print('return code :',res.returncode,'\noutput is : ' ,res.stdout,'\nerror is :' , res.stderr)
+#     except RuntimeError as e :
+#         print(f'exception is {e}')

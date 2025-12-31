@@ -1,0 +1,47 @@
+{
+    "APP_CONFIG": {
+        "app_name": "MediLink",
+        "app_admin": "medilink_admin",
+        "app_desc":"an app for everyone",
+        "app_tagline": "Links Tech To Med",
+        "app_db": "medilink",
+        "host": "localhost",
+        "author": "Tanmay Srivastava"
+    },
+    "AUTHOR_CONFIG": {
+        "name": "Tanmay Srivastava",
+        "email": "tscreateandcare+medilink@gmail.com",
+        "designation": "Student Developer",
+        "desc": "A Coding Entusiast",
+        "phone": "+91 0000000000"
+    },
+    "TABLE_CONFIG": {
+        "table_info":[
+            ["user" , "uid int PRIMARY KEY, uname varchar(20), uemail varchar(30), upass varchar(255), uaddress varchar(50), uphone varchar(20), session varchar(20)"],
+            ["patient", "pid int PRIMARY KEY, pname varchar(30),uid int, pstatus varchar(20), date_of_admittion date"],
+            ["doctor", "drid int PRIMARY KEY, drname varchar(30), uid int,drfeild varchar(20), drdesc varchar(50)"],
+            ["disease", "did int PRIMARY KEY, dname varchar(50), cid int, ddesc varchar(50)"],
+            ["medicine", "mid int PRIMARY KEY, mname varchar(50), cid int, mdesc varchar(50)"],
+            ["category", "cid int PRIMARY KEY, cname varchar(50), cdesc varchar(50), did int, pid int"],
+            ["doctor_patient", "drid int, pid int, PRIMARY KEY (drid, pid)"],
+            ["doctor_disease", "drid int, did int, PRIMARY KEY (drid, did)"],
+            ["patient_disease", "pid int, did int, PRIMARY KEY (pid, did)"],
+            ["disease_medicine", "did int, mid int, PRIMARY KEY (did, mid)"],
+            ["doctor_skill", "drid int, skill_id int, PRIMARY KEY (drid, skill_id)"],
+            ["skill", "skill_id int PRIMARY KEY, skill_name varchar(50)"]
+        ],
+        "foreign_key_info":[
+            ["patient", "FOREIGN KEY (uid) REFERENCES user(uid)"],
+            ["doctor", "FOREIGN KEY (uid) REFERENCES user(uid)"],
+            ["disease", "FOREIGN KEY (cid) REFERENCES category(cid)"],
+            ["medicine", "FOREIGN KEY (cid) REFERENCES category(cid)"],
+            ["category", "FOREIGN KEY (did) REFERENCES disease(did)", "FOREIGN KEY (pid) REFERENCES patient(pid)"],
+            ["doctor_patient", "FOREIGN KEY (drid) REFERENCES doctor(drid)", "FOREIGN KEY (pid) REFERENCES patient(pid)"],
+            ["doctor_disease", "FOREIGN KEY (drid) REFERENCES doctor(drid)", "FOREIGN KEY (did) REFERENCES disease(did)"],
+            ["patient_disease", "FOREIGN KEY (pid) REFERENCES patient(pid)", "FOREIGN KEY (did) REFERENCES disease(did)"],
+            ["disease_medicine", "FOREIGN KEY (did) REFERENCES disease(did)", "FOREIGN KEY (mid) REFERENCES medicine(mid)"],
+            ["doctor_skill", "FOREIGN KEY (drid) REFERENCES doctor(drid)", "FOREIGN KEY (skill_id) REFERENCES skill(skill_id)"]
+        ]
+
+    }
+}

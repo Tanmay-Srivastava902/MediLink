@@ -1,5 +1,7 @@
 # importing modules 
 import getpass
+import os
+
 
 # definfing consts 
 MAX_ATTEMPTS = 3
@@ -7,6 +9,9 @@ NEEDS_INSTALL = -1
 FAILED = 0
 SUCCESS = 1
 SERVICE_TO_PACKAGE = {'apaceh2' : 'apache2' ,'mysql' : 'mysql-server'}  # for installing package currosponding service 
+
+
+
 def is_continue() -> bool:
     '''
     Asks User If To continue Operation or not 
@@ -20,7 +25,8 @@ def is_continue() -> bool:
         :False: if user denies to proceed
     '''
     for attempt in range(MAX_ATTEMPTS):
-        print(f'Attempts Left : {MAX_ATTEMPTS-attempt}')
+        if attempt > 0:
+            print(f'Attempts Left : {MAX_ATTEMPTS-attempt}')
         response = input('Do you want to continue (y/n) : ').strip().lower()
         if response == 'y'   :
             # print('proceeding...')
@@ -68,8 +74,8 @@ def gtpass(user:str ,app:str, security_level:int = 1) -> str:
     if security_level == 2:
 
         for attempt in range(MAX_ATTEMPTS):
-
-            print(f'Attempts Left {MAX_ATTEMPTS-attempt}')
+            if attempt > 0:
+                print(f'Attempts Left {MAX_ATTEMPTS-attempt}')
             password  = getpass.getpass(f'Please Enter Password For {app} User "{user}" : ').strip()
             confirm_password  = getpass.getpass('Please Re-Enter Your Password : ')
             
@@ -88,8 +94,8 @@ def gtpass(user:str ,app:str, security_level:int = 1) -> str:
 
         print('Important ! Passowrd Should Contain atleast 8 chrs\nMust Include One Capital Letter\nMust Include One Small Letter\nMust Include One Special Symbol[@/$/#/%/&]\nMust Include A Digit ')
         for attempt in range(MAX_ATTEMPTS):
-            
-            print(f'Attempts Left {MAX_ATTEMPTS-attempt}')
+            if attempt > 0:
+                print(f'Attempts Left {MAX_ATTEMPTS-attempt}')
             password  = getpass.getpass(f'Please Enter Password For {app} User "{user}" : ').strip()
             confirm_password  = getpass.getpass('Please Re-Enter Your Password : ')
             
@@ -134,3 +140,14 @@ def gtpass(user:str ,app:str, security_level:int = 1) -> str:
             
     else :
         raise RuntimeError('Unknown Error Occured  Please Check Parameters first')
+
+
+
+def config_path(file_name:str):
+    '''Takes The file name [**with extension**] and returns the path correct path of the file  '''       
+        # Get the absolute path to the config directory inside app
+    config_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config'))
+    # Build the full path to a config file
+    file_path = os.path.join(config_dir, file_name)
+
+    return file_path

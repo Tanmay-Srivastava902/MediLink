@@ -1,0 +1,1 @@
+'''This Module Contains Function For management of dr ''''''This Module Contains Function For management of patient'''

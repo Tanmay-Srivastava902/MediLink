@@ -1,10 +1,10 @@
 '''This Module Handdles Database Crud Operations'''
 # importing modules required 
-from mysql_handdler import execute_cmd
-from utils_handdler import is_continue
+from handdlers.mysql_handdler import execute_cmd
+from handdlers.utils_handdler import is_continue
 # NOTE for select queries multiple run create a file for sving current select query and execute everytime reuired
 # DDL Commands
-def create(conn,obj_type:str,obj_name:str,struct:str='',db='') -> bool:
+def create(conn,obj_type:str,obj_name:str,struct:str='') -> bool:
     '''
     Creates An Entity In The  Mysql Server
 
@@ -47,22 +47,13 @@ def create(conn,obj_type:str,obj_name:str,struct:str='',db='') -> bool:
         print("Object Created Successfully")
         return True
     except RuntimeError as e :
-
-        # skipping execute error msg there form execute_cmd
-        error  = str(e).split(':')[1:]
-
         # checking alredy exists error
         msg = str(e).lower()
-        if "already exists" in msg or "error 1050" in msg or "error 1007" in msg:
-            print("Skipping Object Creation")
-            if is_continue():
-                print(f"{obj_name} Object Already Exists")
-                return True
-            else : 
-                raise RuntimeError(f"Object Could Not Be Created : {error}")
-
+        if "already exists" in msg or "1050" in msg or "1007" in msg:
+            print(f"{obj_name} Object Already Exists")
+            return True
         else :             
-            raise RuntimeError(f"Object Could Not Be Created : {error}")
+            raise RuntimeError(f"Object Could Not Be Created : {msg}")
 
 # NOTE most flexible function in this module
 def alter(  conn, operation:str, entity_type:str, 
@@ -143,8 +134,7 @@ def alter(  conn, operation:str, entity_type:str,
         print(f"Table Altered Successfully ! {entity_type} {operation}ed ")
         return True
     except RuntimeError as e :
-        error  = str(e).split(':')[1:]
-        raise RuntimeError(f"Could Not {operation}ed {entity_type} : {error}")
+        raise RuntimeError(f"Could Not {operation}ed {entity_type} : {e}")
 
 
 def drop(conn,obj_type:str,obj_name:str) -> bool:
@@ -185,14 +175,10 @@ def drop(conn,obj_type:str,obj_name:str) -> bool:
         # object created successfully 
         print("Object Dropped Successfully")
         return True
-    except RuntimeError as e :
-        # skipping execute error msg there form execute_cmd
-        error  = str(e).split(':')[1:]
-
-
+    except RuntimeError as e:
         # checking  does not exists error
         msg = str(e).lower()
-        if "does not exists" in msg or "error 1008" in msg or "error 1051" in msg  or 'error 1091' in msg :
+        if "does not exists" in msg or "1008" in msg or "1051" in msg  or '1091' in msg :
             print("Skipping Object Deletion")
             if is_continue() :# asking user wethr to skip or not 
                 # if user choose to skip
@@ -202,7 +188,7 @@ def drop(conn,obj_type:str,obj_name:str) -> bool:
                 raise RuntimeError(f"Object Could Not Be Dropped : Object Does Not Exists")
 
         else :             
-            raise RuntimeError(f"Object Could Not Be Dropped : {error}")
+            raise RuntimeError(f"Object Could Not Be Dropped : {e}")
     
     
 # DML commands
@@ -230,13 +216,9 @@ def insert(conn ,table_name:str,params:tuple,column_order:tuple):
         print("Data Inserted Successfully")
         return True
     except RuntimeError as e :
-
-        # skipping execute error msg there form execute_cmd
-        error  = str(e).split(':')[1:]
-
         # checking alredy exists error
         msg = str(e).lower()
-        if "duplicate entry" in msg or "error 1062" in msg :
+        if "duplicate entry" in msg or "1062" in msg :
             print("Skipping Data Insertion")
             if is_continue (): 
                 print(f"Duplicate Entry")
@@ -244,7 +226,7 @@ def insert(conn ,table_name:str,params:tuple,column_order:tuple):
             else:
                 raise RuntimeError(f"Could Not Insert: Duplicate Entry Found")
         else :             
-            raise RuntimeError(f"Could Not Insert: {error}")
+            raise RuntimeError(f"Could Not Insert: {e}")
 
 def update(conn ,table_name:str, set_clause:str,condition:str,params:tuple):
     '''
@@ -270,8 +252,6 @@ def update(conn ,table_name:str, set_clause:str,condition:str,params:tuple):
         return True
     except RuntimeError as e :
 
-        # skipping execute error msg there form execute_cmd
-        error  = str(e).split(':')[1:]
         # checking alredy exists error
         msg = str(e).lower()
         if "No rows matched" in msg  :
@@ -282,7 +262,7 @@ def update(conn ,table_name:str, set_clause:str,condition:str,params:tuple):
             else:
                 raise RuntimeError(f"Could Not Update: No Matching Entry Found")
         else :
-            raise RuntimeError(f"Could Not Update: {error}")
+            raise RuntimeError(f"Could Not Update: {e}")
 
 
 def delete(conn ,table_name:str, condition:str,params:tuple ):
@@ -309,8 +289,6 @@ def delete(conn ,table_name:str, condition:str,params:tuple ):
         return True
     except RuntimeError as e :
         
-        # skipping execute error msg there form execute_cmd
-        error  = str(e).split(':')[1:]
         # checking alredy exists error
         msg = str(e).lower()
         if "No rows matched" in msg or '0 rows affected' :
@@ -321,7 +299,7 @@ def delete(conn ,table_name:str, condition:str,params:tuple ):
             else:
                 raise RuntimeError(f"Could Not Delete: No Matching Entry Found")
         else :
-            raise RuntimeError(f"Could Not Delete: {error}")
+            raise RuntimeError(f"Could Not Delete: {e}")
 
 
 # if __name__ == '__main__' :
